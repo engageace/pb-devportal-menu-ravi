@@ -1,4 +1,47 @@
-app.directive('custommenu', function() {
+angular
+.module('devportal-json-menu')
+.controller('MenuController', ["$scope", "$rootScope", "$window", "$http", "$stateParams", "$state", "$sce", "TokenFactory", function($scope, $rootScope, $window, $http, $stateParams, $state, $sce, TokenFactory) {
+    const self = this;
+    self.selectedTab = $stateParams.productType;
+    console.log('self.selectedTab >>', self.selectedTab);
+    self.setSelectedMenu = function(menuSelected){
+        self.selectedTab = menuSelected;
+    }
+    
+    $http.get('https://pitneybowes.oktapreview.com/api/v1/sessions/me', {withCredentials: true})
+    .success(function (oktaData) {
+        
+        console.log("oktaData>>>> ", oktaData);
+        let email = oktaData.login;
+        let productType;
+        
+        if($rootScope.currentPortal == 'devPortal')
+            productType = 'default';
+        else{
+            const userDetails = TokenFactory.getUserInfo();
+            if(userDetails.user.subscriptions.validateaddress)
+                productType = 'excelapp';
+            else if(userDetails.user.subscriptions.validateaddressgsuite)   
+                productType = 'gsuite'; 
+        }     
+        
+        $http.get('/api/menu/build/'+email+'/mainMenu/'+$rootScope.currentPortal+'/'+productType)
+        .then(function (res) {
+            self.menuItems = res.data.main_menu;
+            self.rightMenu = res.data.right_menu;
+        }).catch(function (err) {
+            console.log("Got getMenu Err :",err);
+        });
+    })
+    .error(function (data) {
+        console.log("Got getMenu Err jsnop:",data);
+    });       
+
+    self.renderHtml = function(html){
+        return $sce.trustAsHtml(atob(html));
+    }
+}])
+.directive('custommenu', function() {
     //define the directive object
     var directive = {};
     
@@ -6,7 +49,7 @@ app.directive('custommenu', function() {
     directive.restrict = 'E';
     
     //template replaces the complete element with its text. 
-    directive.templateUrl = "views/menu.html";
+    directive.templateUrl = "bower_components/devportal-json-menu/views/menu.html";
     directive.controller  = 'MenuController';
     directive.controllerAs= 'MenuCtrl';
         
