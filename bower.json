@@ -1,4 +1,32 @@
 {
-    "name": "devportal-json-menu",
-    "version": "0.0.1"
+  "name": "devportal-json-menu",
+  "version": "0.0.1",
+  "main": "./dist/ng-copy-text.js",
+  "description": "HTML5 based Copy-to-Clipboard with AngularJS.",
+  "homepage": "https://github.com/engageace/pb-devportal-menu-ravi",
+  "private": false,
+  "authors": [
+    "Ian Grail"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/engageace/pb-devportal-menu-ravi.git"
+  },
+  "keywords": [
+    "angular"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "angular": "1.2.x",
+    "angular-mocks": "~1.2.x"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "build.conf.js",
+    "gulpfile.js",
+    "karma.conf.js",
+    "package.json"
+  ]
 }

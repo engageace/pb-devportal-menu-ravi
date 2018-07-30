@@ -11,8 +11,9 @@ const MenuController = (function () {
 		}
 		
         Jsonmenu.checkSession()
-        .success(function (oktaData, status, headers, config) {
+        .success(function (oktaData) {
             
+            console.log("oktaData>>>> ", oktaData);
 			let email = oktaData.login;
             let productType;
             
@@ -27,20 +28,13 @@ const MenuController = (function () {
             }     
             
             Jsonmenu.getMenu(email, 'mainMenu', $rootScope.currentPortal, productType).then(function (res) {
-                self.menuItems = res.data;
-            }).catch(function (err) {
-                console.log("Got getMenu Err :",err);
-            });
-            
-            let displayName = userDetails.user.firstName + " " + userDetails.user.lastName;
-
-            ResourceService.getMenu(displayName, 'rightMenu', $rootScope.currentPortal, productType).then(function (res) {
-                self.rightMenu = res.data;
+                self.menuItems = res.data.main_menu;
+                self.rightMenu = res.data.right_menu;
             }).catch(function (err) {
                 console.log("Got getMenu Err :",err);
             });
         })
-        .error(function (data, status, headers, config) {
+        .error(function (data) {
             console.log("Got getMenu Err jsnop:",data);
         });       
 
