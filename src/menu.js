@@ -44,7 +44,7 @@ angular
     directive.restrict = 'E';
     
     //template replaces the complete element with its text. 
-    directive.templateUrl = "bower_components/devportal-json-menu/views/menu.html";
+    directive.templateUrl = "bower_components/test_ravi/views/menu.html";
     directive.controller  = 'MenuController';
     directive.controllerAs= 'MenuCtrl';
         

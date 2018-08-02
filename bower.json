@@ -2,11 +2,11 @@
   "name": "devportal-json-menu",
   "version": "0.0.1",
   "main": "./dist/menu.js",
-  "description": "HTML5 based Copy-to-Clipboard with AngularJS.",
+  "description": "json menu",
   "homepage": "https://github.com/engageace/pb-devportal-menu-ravi",
   "private": false,
   "authors": [
-    "Ian Grail"
+    "Ravi Kumar"
   ],
   "repository": {
     "type": "git",
