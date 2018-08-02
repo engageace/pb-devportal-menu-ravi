@@ -1,7 +1,7 @@
 angular
-.module('devportal-json-menu')
+.module('devportal-json-menu', [])
 .controller('MenuController', ["$scope", "$rootScope", "$http", "$stateParams", "$sce", function($scope, $rootScope, $http, $stateParams, $sce) {
-    const self = this;
+    var self = this;
     self.selectedTab = $stateParams.productType;
     console.log('self.selectedTab >>', self.selectedTab);
     self.setSelectedMenu = function(menuSelected){
@@ -44,7 +44,7 @@ angular
     directive.restrict = 'E';
     
     //template replaces the complete element with its text. 
-    directive.templateUrl = "bower_components/test_ravi/views/menu.html";
+    directive.templateUrl = "bower_components/devportal-json-menu/views/menu.html";
     directive.controller  = 'MenuController';
     directive.controllerAs= 'MenuCtrl';
         
