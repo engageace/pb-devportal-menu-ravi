@@ -1,6 +1,6 @@
 angular
 .module('devportal-json-menu')
-.controller('MenuController', ["$scope", "$rootScope", "$window", "$http", "$stateParams", "$state", "$sce", "TokenFactory", function($scope, $rootScope, $window, $http, $stateParams, $state, $sce, TokenFactory) {
+.controller('MenuController', ["$scope", "$rootScope", "$http", "$stateParams", "$sce", function($scope, $rootScope, $http, $stateParams, $sce) {
     const self = this;
     self.selectedTab = $stateParams.productType;
     console.log('self.selectedTab >>', self.selectedTab);
@@ -11,19 +11,13 @@ angular
     $http.get('https://pitneybowes.oktapreview.com/api/v1/sessions/me', {withCredentials: true})
     .success(function (oktaData) {
         
-        console.log("oktaData>>>> ", oktaData);
         let email = oktaData.login;
-        let productType;
+        let productType = 'default';
         
-        if($rootScope.currentPortal == 'devPortal')
-            productType = 'default';
-        else{
-            const userDetails = TokenFactory.getUserInfo();
-            if(userDetails.user.subscriptions.validateaddress)
-                productType = 'excelapp';
-            else if(userDetails.user.subscriptions.validateaddressgsuite)   
-                productType = 'gsuite'; 
-        }     
+        if(typeof $rootScope.currentPortal === 'undefined') 
+           $rootScope.currentPortal = 'devPortal';
+        else if($rootScope.currentPortal === 'appPortal')
+            productType = $rootScope.productType;
         
         $http.get('/api/menu/build/'+email+'/mainMenu/'+$rootScope.currentPortal+'/'+productType)
         .then(function (res) {
@@ -40,6 +34,7 @@ angular
     self.renderHtml = function(html){
         return $sce.trustAsHtml(atob(html));
     }
+    
 }])
 .directive('custommenu', function() {
     //define the directive object
