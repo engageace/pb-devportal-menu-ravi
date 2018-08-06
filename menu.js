@@ -66,25 +66,30 @@
             self.selectedTab = menuSelected;
         }
         
+        //let email = oktaData.login;
+        var productType = 'default';
+            
+        if(typeof $rootScope.currentPortal === 'undefined') 
+            $rootScope.currentPortal = 'devPortal';
+        else if($rootScope.currentPortal === 'appPortal')
+            productType = $rootScope.productType;
+
         $http.get('https://pitneybowes.oktapreview.com/api/v1/sessions/me', {withCredentials: true})
-        .success(function (oktaData) {
-            
-            //let email = oktaData.login;
-            var productType = 'default';
-            
-            if(typeof $rootScope.currentPortal === 'undefined') 
-                $rootScope.currentPortal = 'devPortal';
-            else if($rootScope.currentPortal === 'appPortal')
-                productType = $rootScope.productType;
-            
-            $http.get('/api/menu/build/'+oktaData.login+'/mainMenu/'+$rootScope.currentPortal+'/'+productType)
+        .then(function(response) {
+            (response.status === 404) ? self.getmenu('unauth') : self.getmenu(response.data.login);
+        }, function(response) {
+            console.log(response, '<<<<<<<<<<<<<<<<,-----');
+        });
+
+        self.getmenu = function(login){
+            $http.get('/api/menu/build/'+login+'/mainMenu/'+$rootScope.currentPortal+'/'+productType)
             .then(function (res) {
                 self.menuItems = res.data.main_menu;
                 self.rightMenu = res.data.right_menu;
             }).catch(function (err) {
                 console.log("Got getMenu Err :",err);
             });
-        });
+        }
 
         self.renderHtml = function(html){
             return $sce.trustAsHtml(atob(html));
