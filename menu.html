@@ -12,9 +12,17 @@
   <ul id="headerright-devportal" class="nav navbar-nav navbar-right">
     <!-- Help menu-->
     <li class="divider-vertical hidden-xs"> </li>
-    <li ng-repeat="menuItem in MenuCtrl.rightMenu" class="dropdown"><a data-toggle="dropdown" {{menuItem.attributes}}="{{menuItem.attributes}}" ng-class="{'selected-tab': (MenuCtrl.selectedTab == menuItem.menuSelected)}"> <span ng-if="menuItem.type == 'text'">{{menuItem.name}}</span><span ng-if="menuItem.type == 'html'" ng-bind-html="MenuCtrl.renderHtml(menuItem.htmlCode)">   </span></a>
+    <li ng-repeat="menuItem in MenuCtrl.rightMenu" class="dropdown">
+      <a href="{{menuItem.href}}" data-toggle="{{menuItem.dataToggle}}" {{menuItem.attributes}}="{{menuItem.attributes}}" ng-class="{'selected-tab': (MenuCtrl.selectedTab == menuItem.menuSelected)}"> 
+        <span ng-if="menuItem.type == 'text'">{{menuItem.name}}</span>
+        <span ng-if="menuItem.type == 'html'" ng-bind-html="MenuCtrl.renderHtml(menuItem.htmlCode)"></span>
+      </a>
       <ul class="dropdown-menu pb-animate-menu">
-        <li ng-repeat="subMenu in menuItem.subMenu"><a target="{{subMenu.target}}" href="{{subMenu.href}}" ng-click="MenuCtrl.setSelectedMenu(menuItem.menuSelected)" subMenu.attributes="subMenu.attributes">{{subMenu.name}}</a></li>
+        <li ng-repeat="subMenu in menuItem.subMenu">
+          <a target="{{subMenu.target}}" href="{{subMenu.href}}" ng-click="MenuCtrl.setSelectedMenu(menuItem.menuSelected)" subMenu.attributes="subMenu.attributes">
+            {{subMenu.name}}
+          </a>
+        </li>
       </ul>
     </li>
   </ul>
