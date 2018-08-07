@@ -84,11 +84,10 @@
 
         $http.get('https://pitneybowes.oktapreview.com/api/v1/sessions/me', {withCredentials: true})
         .then(function(response) {
-            (response.status === 404) ? self.getmenu('unauth') : self.getmenu(response.data.login);
+			let email = (typeof response.data !== 'undefined' && typeof response.data.login !== 'undefined') ? response.data.login : 'unauth';
+            self.getmenu(email);
         }, function(response) {
-            console.log(response, '<<<<<<<<<<<<<<<<,-----');
-            //$scope.data = response.data || 'Request failed';
-            //$scope.status = response.status;
+            self.getmenu('unauth');
         });
 
         self.getmenu = function(login){
