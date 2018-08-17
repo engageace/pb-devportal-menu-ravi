@@ -39,6 +39,17 @@
         '            {{subMenu.name}}'+
         '          </a>'+
         '        </li>'+
+        '        <li ng-if="menuItem.dropdownMenu" style="width:250px;padding:20px;">'+
+        '           <div ng-if="MenuCtrl.products.subscribed" class="mute" style="padding-bottom:10px;">My APIs</div>'+
+        '           <span ng-repeat="s in MenuCtrl.products.subscribed">'+
+        '               <span ng-if="menuItem.dropdownMenu[s].type == \'html\'" ng-bind-html="MenuCtrl.renderHtml(menuItem.dropdownMenu[s].htmlCode)"></span>'+
+        '           </span>'+
+        '           <hr>'+
+        '           <div ng-if="MenuCtrl.products.notsubscribed" class="mute" style="padding-bottom:10px;">Developer Hub APIs</div>'+
+        '           <span ng-repeat="ns in MenuCtrl.products.notsubscribed">'+
+        '             <span ng-if="menuItem.dropdownMenu[ns].type == \'html\'" ng-bind-html="MenuCtrl.renderHtml(menuItem.dropdownMenu[ns].htmlCode)"></span>'+
+        '           </span>'+
+        '        </li>'+
         '      </ul>'+
         '    </li>'+
         '  </ul>'+
@@ -95,6 +106,15 @@
             .then(function (res) {
                 self.menuItems = res.data.main_menu;
                 self.rightMenu = res.data.right_menu;
+                self.products = {
+                    'subscribed':[],
+                    'notsubscribed':[]
+                }
+
+                for(let key in res.data.hasProducts)
+                    res.data.hasProducts[key] ? self.products['subscribed'].push(key) : self.products['notsubscribed'].push(key);
+
+                console.log(self.products, '<<<<<<<<<<<<< self.countproducts');    
             }).catch(function (err) {
                 console.log("Got getMenu Err :",err);
             });
@@ -104,4 +124,5 @@
             return $sce.trustAsHtml(atob(html));
         }
     }
+}());
 }());
