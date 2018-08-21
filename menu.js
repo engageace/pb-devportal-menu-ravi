@@ -16,9 +16,9 @@
         //template replaces the complete element with its text. 
         directive.template = '<div class="list-group" id="getStartlist">'+
         '<span ng-repeat="lmitem in MenuCtrl.leftmenu">'+
-        '  <a class="list-group-item" ng-click="MenuCtrl.setSelectedMenu(lmitem.menuSelected)" ng-class="MenuCtrl.selectedTab === lmitem.menuSelected ? \'active\' : \'\'" href="{{lmitem.href}}">{{lmitem.name}}</a>'+
+        '  <a class="list-group-item" ng-click="MenuCtrl.setSelectedMenu(lmitem.menuSelected)" ng-class="MenuCtrl.selectedTabFn(lmitem.menuSelected) === lmitem.menuSelected ? \'active\' : \'\'" href="{{lmitem.href}}">{{lmitem.name}}</a>'+
         '<span ng-repeat="subitem in lmitem.subMenu">'+
-        '  <a class="list-group-item childitem" ng-click="MenuCtrl.setSelectedMenu(subitem.menuSelected)" ng-class="MenuCtrl.selectedTab === subitem.menuSelected ? \'active\' : \'\'" href="{{subitem.href}}">{{subitem.name}}</a>'+
+        '  <a class="list-group-item childitem" ng-click="MenuCtrl.setSelectedMenu(subitem.menuSelected, subitem.parentMenuSelected)" ng-class="MenuCtrl.selectedTabFn(subitem.menuSelected) === subitem.menuSelected ? \'active\' : \'\'" href="{{subitem.href}}">{{subitem.name}}</a>'+
         '</span>'+   
         '</span>'+
         '</div>';
@@ -50,11 +50,11 @@
         directive.template = '<div id="main-navbar" pb-mobile-menu-close="" class="collapse navbar-collapse">'+
         '  <ul class="nav navbar-nav">'+
         '    <li class="divider-vertical hidden-xs"></li>'+
-        '    <li ng-repeat="menuItem in MenuCtrl.menuItems" class="dropdown"><a data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" ng-class="{\'selected-tab\': (MenuCtrl.selectedTab == menuItem.menuSelected)}" class="dropdown-toggle">{{menuItem.name}}</a>'+
+        '   <!-- <li ng-repeat="menuItem in MenuCtrl.menuItems" class="dropdown"><a data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" ng-class="{\'selected-tab\': (MenuCtrl.selectedTab == menuItem.menuSelected)}" class="dropdown-toggle">{{menuItem.name}}</a>'+
         '      <ul class="dropdown-menu pb-animate-menu">'+
-        '        <li ng-repeat="subMenu in menuItem.subMenu"><a target="{{subMenu.target}}" href="{{subMenu.href}}" ng-click="MenuCtrl.setSelectedMenu(menuItem.menuSelected)" subMenu.attributes="subMenu.attributes">{{subMenu.name}}</a></li>'+
+        '        <li ng-repeat="subMenu in menuItem.subMenu"><a target="{{subMenu.target}}" href="{{subMenu.href}}" subMenu.attributes="subMenu.attributes">{{subMenu.name}}</a></li>'+
         '      </ul>'+
-        '    </li>'+
+        '    </li>-->'+
         '  </ul>'+
         '  <!-- start right menus-->'+
         '  <ul id="headerright-devportal" class="nav navbar-nav navbar-right">'+
@@ -67,7 +67,7 @@
         '      </a>'+
         '      <ul class="dropdown-menu pb-animate-menu">'+
         '        <li ng-repeat="subMenu in menuItem.subMenu">'+
-        '          <a target="{{subMenu.target}}" href="{{subMenu.href}}" ng-click="MenuCtrl.setSelectedMenu(menuItem.menuSelected)" subMenu.attributes="subMenu.attributes">'+
+        '          <a target="{{subMenu.target}}" href="{{subMenu.href}}" subMenu.attributes="subMenu.attributes">'+
         '            {{subMenu.name}}'+
         '          </a>'+
         '        </li>'+
@@ -112,11 +112,27 @@
 
     function MenuController($rootScope, $http, $stateParams, $sce, $location, $filter) {
         var self = this;
-        self.selectedTab = null;
+        self.selectedTab = [];
 
-        self.setSelectedMenu = function(menuSelected){
-            self.selectedTab = menuSelected;
+        self.selectedTabFn   = function(menuSelected){
             console.log(self.selectedTab, '<<< self.selectedTab');
+            for(let key in self.selectedTab)
+                if(self.selectedTab[key] === menuSelected){
+                    return menuSelected;
+                    break;
+                } 
+                
+            return false;    
+        }
+
+        self.setSelectedMenu = function(menuSelected, parentMenuSelected=null){
+            self.selectedTab = [];
+            self.selectedTab.push(menuSelected);
+
+            if(parentMenuSelected)
+            self.selectedTab.push(parentMenuSelected);
+            console.log(self.selectedTab, '<<< setSelectedMenu');
+            console.log(parentMenuSelected, '<<< parentMenuSelected');
         }
         
         //let email = oktaData.login;
@@ -160,10 +176,13 @@
 
                 self.leftmenu = self.menuItems[currentLocation].subMenu;    
 
-                if(!self.selectedTab){
-                    
-                    let searchFilter = $filter('filter')(self.leftmenu, {'href':currentUrl}); 
-                    self.selectedTab = searchFilter[0].menuSelected;
+                console.log(self.selectedTab.length, '<< self.selectedTab.length');
+                if(!self.selectedTab.length){
+                    let searchFilter = search(self.leftmenu, currentUrl);
+                    self.selectedTab.push(searchFilter.menuSelected);
+
+                    if(searchFilter.parentMenuSelected)
+                        self.selectedTab.push(searchFilter.parentMenuSelected);
                 }
 
             }).catch(function (err) {
@@ -174,5 +193,20 @@
         self.renderHtml = function(html){
             return $sce.trustAsHtml(atob(html));
         }
+
+        search = function(menu, url){
+            for(let key in menu){
+                if(menu[key].subMenu){
+                  let submenu = search(menu[key].subMenu, url)
+                  if(submenu) 
+                     return submenu;
+                }
+                
+                if(menu[key].href === url){
+                    return menu[key];
+                    break;
+                }      
+            }
+        }        
     }
 }());
