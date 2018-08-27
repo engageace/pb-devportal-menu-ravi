@@ -4,7 +4,7 @@
      .module('devportal-json-menu', [])
      .controller('MenuController', MenuController)
      .directive('custommenu', menuDirective)
-     .directive('leftmmenu', leftmenuDirective);
+     .directive('leftmenu', leftmenuDirective);
  
      function leftmenuDirective() {
         //define the directive object
