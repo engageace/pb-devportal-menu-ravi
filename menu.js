@@ -157,9 +157,9 @@
                 let currentUrl = $location.absUrl(); 
                 let currentLocation = null;
 
-                if(currentUrl.indexOf('identify') !== -1)
+                if(currentUrl.indexOf('identify') !== -1 || currentUrl.indexOf('learn-pages') !== -1 || currentUrl.indexOf('localhost:9090') !== -1)
                 currentLocation = 'identify';
-                else if(currentUrl.indexOf('software-apis') !== -1)
+                else if(currentUrl.indexOf('software-apis') !== -1 || currentUrl.indexOf('locate') !== -1 || currentUrl.indexOf('lilearn') !== -1)
                 currentLocation = 'LBS';
                 else if(currentUrl.indexOf('shipping') !== -1)
                 currentLocation = 'Vulcan';
